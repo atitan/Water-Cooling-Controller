@@ -82,6 +82,12 @@
     <Compile Include="timer.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="util.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="util.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="water-cooling-controller.c">
       <SubType>compile</SubType>
     </Compile>

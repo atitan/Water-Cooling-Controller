@@ -5,6 +5,8 @@
  *  Author: ATI
  */ 
 
+#include <avr/io.h>
+#include <avr/interrupt.h>
 #include "timer.h"
 
 void timer_init()

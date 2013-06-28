@@ -7,10 +7,11 @@
 
 #define F_CPU 8000000UL
 
-#include "lcd.h"
+#include <stdint.h>
+#include <avr/io.h>
 #include "timer.h"
-
-void int2str(int , char *);
+#include "lcd.h"
+#include "util.h"
 
 int intr_num = 0;
 int counting = 0;
@@ -60,10 +61,6 @@ int main(void){
   return 0;
 }
 
-
-void int2str(int i, char *s) {
-	  sprintf(s,"%d",i);
-}
 
 ISR (TIMER0_OVF_vect)
 {

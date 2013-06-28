@@ -1,13 +1,14 @@
 /* lcd.c -- (c) chris kern -- Mon Feb 16 17:36:34 EST 2009  */
 /* Swap read error.  You lose your mind.                    */
-#include "lcd.h"
+
 #include <avr/io.h>
+#include "lcd.h"
 
 // LCD <=> AVR connections:
 //
 // D:   PORTB
 // D/I: PD7
-// R/W: PD6->4
+// R/W: PD4 (PD6 preserved for PWM output)
 // E:   PD5
 // CS1: PD2
 // CS2: PD3
@@ -81,10 +82,8 @@ void lcd_write_wait(uint8_t chip, uint8_t reg, uint8_t data) {
 void lcd_init() {
   uint16_t d;
   DDRB   =  0x00;  // PORTB inputs for now.
-  //DDRD  |=  0xEC;  // 5 outputs on PORTD
-  DDRD  |=  0xBC;
-  //PORTD &= ~0xE0;  // R/W, D/I, E low
-  PORTD &= ~0xB0;
+  DDRD  |=  0xBC; // 5 outputs on PORTD
+  PORTD &= ~0xB0; // R/W, D/I, E low
   PORTD |=  0x0C;  // CS1, CS2 high
   
   for(d=0; d<50000; ++d);  // let the above sink in a bit.
@@ -157,6 +156,7 @@ void lcd_setbit(uint8_t x, uint8_t y, uint8_t v) {
   /* ®Õ¥¿LCD¦ì¸m */
 	x -= 64;
 	y -= 64;
+	
   uint8_t lcd_chip = (x & 0x40) ? 1 : 0;
   uint8_t lcd_x = (y & 0x3F) >> 3;
   uint8_t lcd_y = (x & 0x3F);
@@ -186,7 +186,7 @@ void lcd_putch(uint8_t ch) {
   //chp = font_5x7_data + 5 * (ch-32);
   for(x = 0; x < 6; ++x) {
     //b = pgm_read_byte(chp + x);
-	b = font_5x7_data[(5 * (ch-32)) + x];
+	b = font_5x7_data[(5 * (ch-32)) + x]; //font table direct access
     for(y = 0; y < 8; ++y) {
       if (x < 5 && y < 7) {
         lcd_setbit(cursor_x + x, cursor_y +y, b & (1<<y));
