@@ -7,3 +7,6 @@
 
 void timer_init();
 
+void temp_comparator();
+
+void adjust_volt();

@@ -9,7 +9,8 @@
 
 #include <stdint.h>
 #include <avr/io.h>
-#include "timer.h"
+#include <avr/interrupt.h>
+#include "control.h"
 #include "lcd.h"
 #include "util.h"
 
@@ -18,19 +19,15 @@ int counting = 0;
 
 int main(void){
   uint8_t x, y, z = 0;
-  lcd_init();
   timer_init();
+  lcd_init();
   
-  char s[64];
-  int2str(CS11, s);
   
   // print some text
   lcd_set_cursor(0, 0);
   lcd_putstr("Hello World from AVR!");
   lcd_set_cursor(2, 0);
   lcd_putstr("QAQ");
-  lcd_set_cursor(3, 0);
-  lcd_putstr(s);
   //lcd_putstr("_");
   /*lcd_setbit(0, 0, 1);
   lcd_setbit(0, 1, 1);
