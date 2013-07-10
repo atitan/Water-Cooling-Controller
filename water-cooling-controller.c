@@ -18,7 +18,7 @@ int intr_num = 0;
 int counting = 0;
 
 int main(void){
-  uint8_t x, y, z = 0;
+  //uint8_t x, y, z = 0;
   timer_init();
   lcd_init();
   
