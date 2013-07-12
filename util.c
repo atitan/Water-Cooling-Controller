@@ -8,12 +8,12 @@
 #include <stdio.h>
 #include "util.h"
 
-void int2str(int i, char *s)
+void int2str (int i, char *s)
 {
 	sprintf(s,"%d",i);
 }
 
-void dub2str(double d, char *s)
+void dub2str (double d, char *s)
 {
-	sprintf(s, "%2.2f", d);
+	sprintf(s, "%.2f", d);
 }
