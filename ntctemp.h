@@ -18,11 +18,11 @@ References:
 #include <stdio.h>
 
 //enable the B Model Equation
-#define NTCTEMP_B 1 //1 to enable 0 to disable
+#define NTCTEMP_B 0 //1 to enable 0 to disable
 //enable the SH Model Equation
-#define NTCTEMP_SH 1 //1 to enable 0 to disable
+#define NTCTEMP_SH 0 //1 to enable 0 to disable
 //enable the lookup table Equation
-#define NTCTEMP_LKP 0 //1 to enable 0 to disable
+#define NTCTEMP_LKP 1 //1 to enable 0 to disable
 
 #if NTCTEMP_B == 1
 extern float ntctemp_getB(long adcresistence, int beta, float adctref, int adcrref);

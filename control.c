@@ -8,6 +8,10 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "control.h"
+#include "lcd.h"
+#include "adc.h"
+#include "ntctemp.h"
+#include "util.h"
 
 void timer_init()
 {
@@ -19,7 +23,29 @@ void timer_init()
 	sei(); //Enable global interrupt
 }
 
-void temp_comparator()
+void check_temp()
+{
+	static uint16_t adc = 0;
+	static uint16_t adc_old = 0;
+	double temp;
+	char printbuff[10];
+	
+	// Get temperature
+	adc_old = adc;
+	adc = adc_read(0);
+	adc = adc_emafilter(adc, adc_old);
+	temp = ntctemp_getLookup(adc);
+	
+	// Show temperature on lcd
+	dub2str(temp, printbuff);
+	lcd_set_cursor(6, 0);
+	lcd_putstr(printbuff);
+	
+	// Pass tempearture data to comparator
+	temp_comparator(temp);
+}
+
+void temp_comparator(double temp)
 {
 	
 }

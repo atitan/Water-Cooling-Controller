@@ -5,8 +5,8 @@
  *  Author: ATI
  */ 
 
-void timer_init();
-
-void temp_comparator();
-
-void adjust_volt();
+// function prototypes
+extern void timer_init();
+extern void check_temp();
+extern void temp_comparator(double);
+extern void adjust_volt();

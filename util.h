@@ -5,4 +5,6 @@
  *  Author: ATI
  */ 
 
-void int2str(int , char *);
+//function prototypes
+extern void int2str(int , char *);
+extern void dub2str(double , char *);
