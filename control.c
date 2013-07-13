@@ -16,7 +16,7 @@
 
 // file scope variables
 static int is_button_mode = 0;
-static float EEMEM critial_point = 0;
+static float EEMEM ee_critial_point = 0;
 static float temp = 0.0;
 static int volt_level = 0;
 
@@ -25,7 +25,7 @@ void timer_init ()
 	DDRD |= 0x40; //Set PD6 as output
 	TCCR0A |= (1 << WGM00) | (1 << COM0A1); // Configure timer0 for phase-correct PWM on OC0A(PD6) pin
 	TCCR0B |= (1 << CS01 ); //Set prescaler to 8
-	OCR0A = 0; // Set init compare value
+	OCR0A = 5; // Set init compare value
 	TIMSK0 |= (1 << TOIE0 ); // Enable counter overflow interrupt
 }
 
@@ -51,23 +51,43 @@ void check_temp ()
 
 void temp_comparator()
 {
-	float critial_goal = eeprom_read_float( &critial_point );
+	static int ratio = 0;
+	static int ratio_old = 0;
+	float critial_point = eeprom_read_float( &ee_critial_point );
 	
+	if (temp - critial_point > 0)
+	{
+		ratio_old = ratio;
+		ratio = (temp - critial_point) * 10 / critial_point;
+		if (ratio - ratio_old > 5)
+		{
+			adjust_volt(1);
+		}
+	} 
+	else
+	{
+		ratio_old = ratio;
+		ratio = (critial_point - temp) * 10 / temp;
+		if (ratio - ratio_old > 5)
+		{
+			adjust_volt(-1);
+		}
+	}
 	
 }
 
 void adjust_volt (int offset)
 {
 	const static int volt_table[10] = {
-		0, // 0V
-		5,
-		10,
-		15,
-		20,
-		25,
-		30,
-		35,
-		40,
+		5, // 2V
+		5, // 2V
+		10, //
+		15, //
+		20, //
+		25, //
+		30, //
+		35, //
+		40, //
 		255 // 12V
 	};
 	
@@ -85,10 +105,20 @@ void show_info()
 	if (is_button_mode == 0)
 	{
 		char printbuff[25];
+		float critial_point = eeprom_read_float( &ee_critial_point );
+		
+		// Clear lcd first
+		lcd_clear();
 		
 		// Show temperature
 		dub2str(temp, printbuff);
-		sprintf(printbuff, "%s %s", "Temp:", printbuff);
+		sprintf(printbuff, "%s %s", "Curr-temp:", printbuff);
+		lcd_set_cursor(5, 0);
+		lcd_putstr(printbuff);
+		
+		// Show critical point
+		dub2str(critial_point, printbuff);
+		sprintf(printbuff, "%s %s", "Criti-point:", printbuff);
 		lcd_set_cursor(6, 0);
 		lcd_putstr(printbuff);
 		
@@ -106,9 +136,10 @@ void set_critical_temp ()
 	is_button_mode = 1;
 	lcd_clear();
 	
-	//
+	// Press to continue
 	
 	
-	// return
+	// exit button mode
 	is_button_mode = 0;
+	show_info();
 }

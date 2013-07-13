@@ -2,6 +2,7 @@
 /* Swap read error.  You lose your mind.                    */
 
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include "lcd.h"
 
 // LCD <=> AVR connections:
@@ -179,14 +180,13 @@ void lcd_set_cursor(uint8_t row, uint8_t col) {
 
 void lcd_putch(uint8_t ch) {
   uint8_t x, y;
-  //const uint8_t* chp;
   uint8_t b;
+  
   if (ch < 32) ch = 32;
   if (ch > 128) ch = 128;
-  //chp = font_5x7_data + 5 * (ch-32);
+  
   for(x = 0; x < 6; ++x) {
-    //b = pgm_read_byte(chp + x);
-	b = font_5x7_data[(5 * (ch-32)) + x]; //font table direct access
+	b = pgm_read_byte( &font_5x7_data[(5 * (ch-32)) + x] ); // direct access to program memory(flash)
     for(y = 0; y < 8; ++y) {
       if (x < 5 && y < 7) {
         lcd_setbit(cursor_x + x, cursor_y +y, b & (1<<y));
