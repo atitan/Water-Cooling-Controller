@@ -8,6 +8,7 @@
 // function prototypes
 extern void timer_init ();
 extern void check_temp ();
-extern void temp_comparator (float);
-extern void adjust_volt ();
+extern void temp_comparator ();
+extern void adjust_volt (int);
+extern void show_info ();
 extern void set_critical_temp ();

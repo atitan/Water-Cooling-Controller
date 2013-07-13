@@ -15,7 +15,7 @@
 #include "adc.h"
 #include "util.h"
 
-uint16_t EEMEM is_eeprom_inited = 0;
+static uint16_t EEMEM is_eeprom_inited = 0;
 
 int main(void){
 	// initialize everything
@@ -37,21 +37,11 @@ int main(void){
 	if (eeprom_read_word( &is_eeprom_inited  ) == 0)
 	{
 		eeprom_update_word ( &is_eeprom_inited , 1 );
-		lcd_set_cursor(5, 0);
-		lcd_putstr("initiated.");
-		
-		char tess[10];
-		float aaa = 1.49;
-		lcd_set_cursor(6, 0);
-		dub2str(aaa, tess);
-		lcd_putstr(tess);
-		/*lcd_putstr("-1 Catched");
-		eeprom_update_float( (uint32_t*)20, aaa );
-		lcd_set_cursor(6, 0);
-		dub2str(eeprom_read_float( (uint32_t*) 20 ), tess);
-		lcd_putstr(tess);*/
+		set_critical_temp();
 	}
-  
+	
+	sei(); //Enable global interrupt
+	
 	while (1) 
 	{
 		// Reserved for button control
@@ -76,5 +66,6 @@ ISR (TIMER0_OVF_vect)
 		lcd_putstr(z);
 	}
 
-	//check_temp();
+	// check_temp();
+	// show_info();
 }
