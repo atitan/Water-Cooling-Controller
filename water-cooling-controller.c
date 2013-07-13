@@ -57,15 +57,13 @@ ISR (TIMER0_OVF_vect)
 	static int counting = 0;
 	char z[64];
 	
-	if(++intr_num >= 3906)
+	if(++intr_num >= 4000)
 	{
 		intr_num = 0;
 		counting++;
 		int2str(counting, z);
 		lcd_set_cursor(4, 0);
 		lcd_putstr(z);
+		// check_temp();
 	}
-
-	// check_temp();
-	// show_info();
 }
