@@ -112,6 +112,7 @@ void show_info()
 	if (is_button_mode == 0)
 	{
 		char printbuff[25];
+		char printbuff2[25];
 		float critial_point = eeprom_read_float( &ee_critial_point );
 		
 		// Clear lcd first
@@ -119,21 +120,24 @@ void show_info()
 		
 		// Show temperature
 		dub2str(temp, printbuff);
-		sprintf(printbuff, "%s %s", "Curr-temp:", printbuff);
+		strcpy (printbuff2, "Curr-temp: ");
+		strcat (printbuff2, printbuff);
 		lcd_set_cursor(5, 0);
-		lcd_putstr(printbuff);
+		lcd_putstr(printbuff2);
 		
 		// Show critical point
 		dub2str(critial_point, printbuff);
-		sprintf(printbuff, "%s %s", "Criti-point:", printbuff);
+		strcpy (printbuff2, "Criti-point: ");
+		strcat (printbuff2, printbuff);
 		lcd_set_cursor(6, 0);
-		lcd_putstr(printbuff);
+		lcd_putstr(printbuff2);
 		
 		// Show voltage level
 		int2str(volt_level, printbuff);
-		sprintf(printbuff, "%s %s", "Volt level:", printbuff);
+		strcpy (printbuff2, "Volt level: ");
+		strcat (printbuff2, printbuff);
 		lcd_set_cursor(7, 0);
-		lcd_putstr(printbuff);
+		lcd_putstr(printbuff2);
 	}
 }
 
