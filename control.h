@@ -7,6 +7,7 @@
 
 // function prototypes
 extern void timer_init ();
+extern void button_init();
 extern void check_temp ();
 extern void temp_comparator ();
 extern void adjust_volt (int);

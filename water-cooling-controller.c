@@ -20,6 +20,7 @@ static uint16_t EEMEM is_eeprom_inited = 0;
 int main(void){
 	// initialize everything
 	timer_init();
+	button_init();
 	lcd_init();
 	adc_setchannel(0);
 	adc_init();
@@ -44,7 +45,20 @@ int main(void){
 	
 	while (1) 
 	{
-		// Reserved for button control
+			if (((PINC >> 3) & 0x01) == 0)
+			{
+				button_detector++;
+
+				if (button_detector>50)
+				{
+					button_detector = 0;
+					set_critical_temp();
+				}
+			}
+			else
+			{
+				button_detector = 0;
+			}
 	}
   
 	return 0;
@@ -54,16 +68,10 @@ int main(void){
 ISR (TIMER0_OVF_vect)
 {
 	static int intr_num = 0;
-	static int counting = 0;
-	char z[64];
 	
 	if(++intr_num >= 4000)
 	{
 		intr_num = 0;
-		counting++;
-		int2str(counting, z);
-		lcd_set_cursor(4, 0);
-		lcd_putstr(z);
-		// check_temp();
+		check_temp();
 	}
 }
