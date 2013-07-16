@@ -252,8 +252,7 @@ void set_critical_temp ()
 	while ( ((PINC >> 3) & 0x01) == 0 ){} // prevent button being pressed before entering setup
 	while (1)
 	{
-		// edit
-		if (((PINC >> 2) & 0x01) == 0)
+		if (((PINC >> 2) & 0x01) == 0) // edit
 		{
 			button_counter++;
 			if (button_counter > 20)
@@ -263,13 +262,7 @@ void set_critical_temp ()
 			}
 			continue;
 		}
-		else
-		{
-			button_counter = 0;
-		}
-		
-		// save
-		if (((PINC >> 3) & 0x01) == 0)
+		else if (((PINC >> 3) & 0x01) == 0) // save
 		{
 			button_counter++;
 			if (button_counter > 20)
