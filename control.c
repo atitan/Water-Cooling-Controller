@@ -48,6 +48,9 @@ void check_temp ()
 	adc = adc_emafilter(adc, adc_old);
 	temp = ntctemp_getLookup(adc);
 	
+	// Show info
+	show_info();
+	
 	// Call comparator after 5 checks
 	if(check_counter++ > 5)
 	{
@@ -66,7 +69,7 @@ void temp_comparator()
 	{
 		ratio_old = ratio;
 		ratio = (temp - critial_point) * 10 / critial_point;
-		if (ratio - ratio_old > 5)
+		if (ratio - ratio_old > 1)
 		{
 			adjust_volt(1);
 		}
@@ -75,7 +78,7 @@ void temp_comparator()
 	{
 		ratio_old = ratio;
 		ratio = (critial_point - temp) * 10 / temp;
-		if (ratio - ratio_old > 5)
+		if (ratio - ratio_old > 1)
 		{
 			adjust_volt(-1);
 		}

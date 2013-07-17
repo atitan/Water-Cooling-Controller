@@ -15,5 +15,5 @@ void int2str (int i, char *s)
 
 void dub2str (double d, char *s)
 {
-	sprintf(s, "%.1f", d);
+	sprintf(s, "%.2f", d);
 }
