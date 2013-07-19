@@ -19,6 +19,7 @@
 static int is_button_mode = 0;
 static float EEMEM ee_critial_point = 20.0;
 static float temp = 0.0;
+static float temp_old = 0.0;
 static int volt_level = 0;
 
 void timer_init ()
@@ -46,13 +47,16 @@ void check_temp ()
 	adc_old = adc;
 	adc = adc_read(0);
 	adc = adc_emafilter(adc, adc_old);
+	if(++check_counter > 10){
+		temp_old = temp;
+	}
 	temp = ntctemp_getLookup(adc);
 	
 	// Show info
 	show_info();
 	
 	// Call comparator after 5 checks
-	if(check_counter++ > 5)
+	if(check_counter > 10)
 	{
 		check_counter = 0;
 		temp_comparator();
@@ -61,32 +65,38 @@ void check_temp ()
 
 void temp_comparator()
 {
-	static int ratio = 0;
-	static int ratio_old = 0;
+	static int indicator = 0;
 	float critial_point = eeprom_read_float( &ee_critial_point );
 	
 	if (temp - critial_point > 0)
 	{
-		ratio_old = ratio;
-		ratio = (temp - critial_point) * 10 / critial_point;
-		if (ratio - ratio_old > 1)
+		if (temp >= temp_old - 0.2)
 		{
-			adjust_volt(1);
+			adjust_volt(volt_level + 1);
 		}
+		
+		indicator = 1;
 	} 
 	else
 	{
-		ratio_old = ratio;
-		ratio = (critial_point - temp) * 10 / temp;
-		if (ratio - ratio_old > 1)
+		if (indicator == 1)
 		{
-			adjust_volt(-1);
+			adjust_volt( (int)(volt_level / 2) );
 		}
+		else
+		{
+			if (temp <= temp_old + 0.2)
+			{
+				adjust_volt(volt_level - 1);
+			}
+		}
+		
+		indicator = 0;
 	}
 	
 }
 
-void adjust_volt (int offset)
+void adjust_volt (int value)
 {
 	const static int volt_table[10] = {
 		5, // 2V
@@ -101,9 +111,9 @@ void adjust_volt (int offset)
 		255 // 12V
 	};
 	
-	if (volt_level + offset >= 0 && volt_level + offset < 10)
+	if (value >= 0 && value < 10)
 	{
-		volt_level += offset;
+		volt_level = value;
 		OCR0A = volt_table[volt_level];
 	}
 	
@@ -121,25 +131,29 @@ void show_info()
 		// Clear lcd first
 		lcd_clear();
 		
+		// Show banner
+		lcd_set_cursor(0, 0);
+		lcd_putstr("== Status ==");
+		
 		// Show temperature
 		dub2str(temp, printbuff);
-		strcpy (printbuff2, "Curr-temp: ");
+		strcpy (printbuff2, "Current temp: ");
 		strcat (printbuff2, printbuff);
-		lcd_set_cursor(5, 0);
+		lcd_set_cursor(1, 0);
 		lcd_putstr(printbuff2);
 		
 		// Show critical point
 		dub2str(critial_point, printbuff);
-		strcpy (printbuff2, "Criti-point: ");
+		strcpy (printbuff2, "Critical point: ");
 		strcat (printbuff2, printbuff);
-		lcd_set_cursor(6, 0);
+		lcd_set_cursor(3, 0);
 		lcd_putstr(printbuff2);
 		
 		// Show voltage level
 		int2str(volt_level, printbuff);
-		strcpy (printbuff2, "Volt level: ");
+		strcpy (printbuff2, "Voltage level: ");
 		strcat (printbuff2, printbuff);
-		lcd_set_cursor(7, 0);
+		lcd_set_cursor(5, 0);
 		lcd_putstr(printbuff2);
 	}
 }
