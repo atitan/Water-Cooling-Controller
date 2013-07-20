@@ -155,12 +155,6 @@ void show_info()
 		strcat (printbuff2, printbuff);
 		lcd_set_cursor(5, 0);
 		lcd_putstr(printbuff2);
-		
-		int2str(OCR0A , printbuff);
-		strcpy (printbuff2, "OCR0A: ");
-		strcat (printbuff2, printbuff);
-		lcd_set_cursor(7, 0);
-		lcd_putstr(printbuff2);
 	}
 }
 
