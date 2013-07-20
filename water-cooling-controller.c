@@ -24,12 +24,6 @@ int main(void){
 	lcd_init();
 	adc_setchannel(0);
 	adc_init();
-  
-	// set lcd text
-	/*lcd_set_cursor(0, 0);
-	lcd_putstr("Hello World from AVR!");
-	lcd_set_cursor(2, 0);
-	lcd_putstr("QAQ");*/
 	
 	// variables
 	int button_detector = 0;

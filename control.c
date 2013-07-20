@@ -27,7 +27,7 @@ void timer_init ()
 	DDRD |= 0x40; //Set PD6 as output
 	TCCR0A |= (1 << WGM00) | (1 << COM0A1); // Configure timer0 for phase-correct PWM on OC0A(PD6) pin
 	TCCR0B |= (1 << CS01 ); //Set prescaler to 8
-	OCR0A = 5; // Set init compare value
+	OCR0A = 6; // Set init compare value
 	TIMSK0 |= (1 << TOIE0 ); // Enable counter overflow interrupt
 }
 
@@ -47,7 +47,7 @@ void check_temp ()
 	adc_old = adc;
 	adc = adc_read(0);
 	adc = adc_emafilter(adc, adc_old);
-	if(++check_counter > 10){
+	if(++check_counter > 5){
 		temp_old = temp;
 	}
 	temp = ntctemp_getLookup(adc);
@@ -56,7 +56,7 @@ void check_temp ()
 	show_info();
 	
 	// Call comparator after 5 checks
-	if(check_counter > 10)
+	if(check_counter > 5)
 	{
 		check_counter = 0;
 		temp_comparator();
@@ -99,15 +99,15 @@ void temp_comparator()
 void adjust_volt (int value)
 {
 	const static int volt_table[10] = {
-		5, // 2V
-		5, // 2V
-		10, //
-		15, //
-		20, //
-		25, //
-		30, //
-		35, //
-		40, //
+		6, // 2.6V
+		8, // 3.8V
+		9, // 4.4V
+		11, // 5.5V
+		13, // 6.6V 
+		15, // 7.8V
+		17, // 8.8V
+		19, // 10V
+		21, // 11V
 		255 // 12V
 	};
 	
@@ -154,6 +154,12 @@ void show_info()
 		strcpy (printbuff2, "Voltage level: ");
 		strcat (printbuff2, printbuff);
 		lcd_set_cursor(5, 0);
+		lcd_putstr(printbuff2);
+		
+		int2str(OCR0A , printbuff);
+		strcpy (printbuff2, "OCR0A: ");
+		strcat (printbuff2, printbuff);
+		lcd_set_cursor(7, 0);
 		lcd_putstr(printbuff2);
 	}
 }
