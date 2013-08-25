@@ -15,7 +15,7 @@
 #include "adc.h"
 #include "util.h"
 
-static uint16_t EEMEM is_eeprom_inited = 0;
+static uint8_t EEMEM is_eeprom_inited = 0;
 
 int main(void){
 	// initialize everything
@@ -28,19 +28,19 @@ int main(void){
 	// variables
 	int button_detector = 0;
 	
-	// force setting critical point
-	if (eeprom_read_word( &is_eeprom_inited  ) == 0)
+	// first time setting
+	if (eeprom_read_byte( &is_eeprom_inited  ) == 0)
 	{
-		eeprom_update_word ( &is_eeprom_inited , 1 );
+		set_volt_table();
 		set_critical_temp();
+		eeprom_update_byte ( &is_eeprom_inited , 1 );
 	}
 	
 	sei(); //Enable global interrupt
-	check_temp(); //Check temp
 	
 	while (1) 
 	{
-			if (((PINC >> 3) & 0x01) == 0)
+			if ( ( ((PINC >> 3) & 0x01) | ((PINC >> 1) & 0x01) ) == 0 )
 			{
 				button_detector++;
 
@@ -48,6 +48,16 @@ int main(void){
 				{
 					button_detector = 0;
 					set_critical_temp();
+				}
+			}
+			else if ( ( ((PINC >> 2) & 0x01) | ((PINC >> 1) & 0x01) ) == 0 )
+			{
+				button_detector++;
+
+				if (button_detector>50)
+				{
+					button_detector = 0;
+					set_volt_table();
 				}
 			}
 			else

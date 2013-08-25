@@ -13,3 +13,4 @@ extern void temp_comparator ();
 extern void adjust_volt (int);
 extern void show_info ();
 extern void set_critical_temp ();
+extern void set_volt_table ();
